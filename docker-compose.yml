@@ -1,0 +1,72 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-pitchly}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-pitchly}
+      POSTGRES_DB: ${POSTGRES_DB:-pitchly}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-pitchly}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    ports:
+      - "5432:5432"
+
+  backend:
+    build: ./pitchly-be
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-pitchly}:${POSTGRES_PASSWORD:-pitchly}@db:5432/${POSTGRES_DB:-pitchly}
+      JWT_SECRET: ${JWT_SECRET:-change-me-in-production}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      PRIMARY_MODEL: ${PRIMARY_MODEL:-gpt-4o}
+      FALLBACK_MODEL: ${FALLBACK_MODEL:-gemini-2.0-flash}
+      UPLOAD_DIR: /data/uploads
+      CHROMA_DIR: /data/chroma
+      DOCUMENT_ENCRYPTION_KEY: ${DOCUMENT_ENCRYPTION_KEY:-}
+      TAVILY_API_KEY: ${TAVILY_API_KEY:-}
+      EMBEDDING_MODEL: ${EMBEDDING_MODEL:-text-embedding-3-small}
+      AZURE_SPEECH_KEY: ${AZURE_SPEECH_KEY:-}
+      AZURE_REGION: ${AZURE_REGION:-southeastasia}
+      DID_API_KEY: ${DID_API_KEY:-}
+      DID_SOURCE_TEKNIS: ${DID_SOURCE_TEKNIS:-}
+      DID_SOURCE_DAMPAK: ${DID_SOURCE_DAMPAK:-}
+      DID_SOURCE_SKEPTIS: ${DID_SOURCE_SKEPTIS:-}
+      FRONTEND_ORIGIN: ${FRONTEND_ORIGIN:-http://localhost:3000}
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+      EMAIL_FROM: ${EMAIL_FROM:-Pitchly <onboarding@resend.dev>}
+      APP_BASE_URL: ${APP_BASE_URL:-http://localhost:3000}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+      GOOGLE_REDIRECT_URI: ${GOOGLE_REDIRECT_URI:-http://localhost:3000/auth/google/callback}
+    volumes:
+      - uploads:/data/uploads
+      - chroma:/data/chroma
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build:
+      context: ./pitchly-fe
+      args:
+        NEXT_PUBLIC_AVATAR_TEKNIS: ${NEXT_PUBLIC_AVATAR_TEKNIS:-}
+        NEXT_PUBLIC_AVATAR_DAMPAK: ${NEXT_PUBLIC_AVATAR_DAMPAK:-}
+        NEXT_PUBLIC_AVATAR_SKEPTIS: ${NEXT_PUBLIC_AVATAR_SKEPTIS:-}
+    depends_on:
+      - backend
+    environment:
+      BACKEND_URL: http://backend:8000
+      NODE_ENV: production
+    ports:
+      - "3000:3000"
+
+volumes:
+  pgdata:
+  uploads:
+  chroma:

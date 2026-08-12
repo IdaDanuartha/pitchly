@@ -1,0 +1,8 @@
+.env
+*.local
+node_modules/
+.venv/
+__pycache__/
+data/
+uploads/
+.DS_Store

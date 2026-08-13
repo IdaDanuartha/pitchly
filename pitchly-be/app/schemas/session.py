@@ -7,6 +7,7 @@ from pydantic import BaseModel, ConfigDict, Field
 Gaya = Literal["kritis", "seimbang", "santai"]
 Kedalaman = Literal["ringkas", "detail"]
 Bahasa = Literal["formal", "santai"]
+OutputLanguage = Literal["id", "en"]
 
 
 Jenis = Literal["kompetisi", "akademik"]
@@ -21,6 +22,7 @@ class SessionCreate(BaseModel):
     gaya: Gaya = "seimbang"
     kedalaman: Kedalaman = "ringkas"
     bahasa: Bahasa = "formal"
+    output_language: OutputLanguage = "id"
     durasi_menit: int = Field(default=15, ge=10, le=30)
     dengan_presentasi: bool = False
     durasi_presentasi_menit: int = Field(default=0, ge=0, le=15)
@@ -63,6 +65,7 @@ class SessionPublic(BaseModel):
     gaya: str
     kedalaman: str
     bahasa: str
+    output_language: str
     durasi_menit: int
     sisa_detik: int
     persona_order: list[str]
@@ -104,6 +107,7 @@ class ScorecardPublic(BaseModel):
     id: uuid.UUID
     session_id: uuid.UUID
     skor_per_kategori_json: dict
+    skor_akhir: int | None = None
     ringkasan_kekuatan: str
     ringkasan_kelemahan: str
     rencana_perbaikan_json: list

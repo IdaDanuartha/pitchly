@@ -41,6 +41,8 @@ class Session(TimestampMixin, Base):
     gaya: Mapped[str] = mapped_column(default="seimbang", nullable=False)
     kedalaman: Mapped[str] = mapped_column(default="ringkas", nullable=False)
     bahasa: Mapped[str] = mapped_column(default="formal", nullable=False)
+    # Output language the judges speak/score in: "id" (default) or "en".
+    output_language: Mapped[str] = mapped_column(default="id", nullable=False)
     ronde: Mapped[int] = mapped_column(default=2, nullable=False)  # deprecated
     durasi_menit: Mapped[int] = mapped_column(default=15, nullable=False)
     mulai_pada: Mapped[datetime | None] = mapped_column(

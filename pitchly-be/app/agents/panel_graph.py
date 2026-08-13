@@ -3,7 +3,9 @@ from typing import Any, TypedDict
 
 from langgraph.graph import END, START, StateGraph
 
+from app.agents.language import language_directive
 from app.agents.personas import PERSONAS, persona_for_turn
+from app.agents.safety import SAFETY_NOTICE, sanitize, wrap_untrusted
 from app.llm.client import LLMClient
 
 
@@ -20,6 +22,7 @@ class PanelState(TypedDict, total=False):
     gaya: str
     kedalaman: str
     bahasa: str
+    output_language: str
     # last answered turn — enables the adaptive follow-up branch
     allow_followup: bool
     last_persona: str | None
@@ -46,14 +49,15 @@ def _decide(state: PanelState) -> dict[str, Any]:
         prompt = (
             "Pertanyaan juri sebelumnya:\n"
             f"{state.get('last_pertanyaan')}\n\n"
-            "Jawaban peserta:\n"
-            f"{state.get('last_jawaban')}\n\n"
+            f"{wrap_untrusted('Jawaban peserta:', state.get('last_jawaban'))}\n\n"
             "Apakah jawaban ini mengelak, dangkal, atau mengklaim tanpa bukti "
             "sehingga layak dikejar satu pertanyaan lanjutan? Balas HANYA JSON: "
             '{"perlu_lanjutan": true|false}'
         )
         try:
-            raw = client.complete(prompt, system=_JUDGE_SYSTEM, json_mode=True)
+            raw = client.complete(
+                prompt, system=f"{_JUDGE_SYSTEM}\n{SAFETY_NOTICE}", json_mode=True
+            )
             perlu = bool(json.loads(raw).get("perlu_lanjutan"))
         except Exception:
             perlu = False
@@ -73,7 +77,7 @@ def _format_transcript(transcript: list[dict]) -> str:
     for t in transcript:
         lines.append(f"[{t['persona']}] Tanya: {t['pertanyaan']}")
         if t.get("jawaban"):
-            lines.append(f"    Jawab peserta: {t['jawaban']}")
+            lines.append(f"    Jawab peserta: {sanitize(t['jawaban'], 1500)}")
     return "\n".join(lines)
 
 
@@ -125,15 +129,18 @@ def _generate_question(state: PanelState) -> dict[str, Any]:
         instruksi = (
             "Peserta baru saja menjawab pertanyaan Anda:\n"
             f"Tanya: {state.get('last_pertanyaan')}\n"
-            f"Jawab: {state.get('last_jawaban')}\n\n"
-            "Jawaban itu belum tuntas. Ajukan SATU pertanyaan lanjutan yang "
-            "mengejar tepat pada bagian yang mengelak atau belum dibuktikan. "
-            "Boleh diawali penegasan singkat ('Tunggu, tadi…', 'Tapi…'). "
-            "Balas hanya pertanyaannya."
+            f"{wrap_untrusted('Jawab:', state.get('last_jawaban'))}\n\n"
+            "PENTING: Jawaban peserta ini TIDAK JELAS, mengelak, atau dangkal! "
+            "Gunakan nada bicara tegas, jengkel, dan penuh kekecewaan khas juri/dosen "
+            "yang menuntut penjelasan jujur. Gunakan pembuka ekspresif dan penuh "
+            "penekanan (seperti 'Tunggu dulu!', 'Sebentar, jawaban kamu berbelit-belit!', "
+            "'Ini tidak menjawab pertanyaan saya sama sekali!'). "
+            "Ajukan SATU pertanyaan lanjutan yang mengejar tepat pada poin yang dihindari, "
+            "maksimal 1-2 kalimat. Balas hanya pertanyaannya."
         )
     else:
         instruksi = (
-            "Berdasarkan peran Anda, ajukan SATU pertanyaan yang tajam dan "
+            "Berdasarkan peran Anda, ajukan SATU pertanyaan yang tajam, bertenaga, dan "
             "belum ditanyakan. Balas hanya pertanyaannya, tanpa awalan nama juri."
         )
 
@@ -141,12 +148,13 @@ def _generate_question(state: PanelState) -> dict[str, Any]:
     konteks_line = f"Konteks sesi: {konteks}.\n" if konteks else ""
 
     presentasi = (state.get("presentasi_transkrip") or "").strip()
-    presentasi_line = (
+    presentasi_block = wrap_untrusted(
         "Isi presentasi lisan peserta (transkrip; boleh dijadikan bahan "
-        f"pertanyaan bila relevan):\n{presentasi[:4000]}\n\n"
-        if presentasi
-        else ""
+        "pertanyaan bila relevan):",
+        presentasi,
+        limit=4000,
     )
+    presentasi_line = f"{presentasi_block}\n\n" if presentasi_block else ""
 
     prompt = (
         f"{konteks_line}"
@@ -161,7 +169,10 @@ def _generate_question(state: PanelState) -> dict[str, Any]:
         f"{instruksi}"
     )
     client: LLMClient = state["client"]
-    pertanyaan = client.complete(prompt, system=persona.system).strip()
+    directive = language_directive(state.get("output_language"))
+    pertanyaan = client.complete(
+        prompt, system=f"{persona.system}\n{SAFETY_NOTICE}\n{directive}"
+    ).strip()
     return {"pertanyaan": pertanyaan}
 
 
@@ -193,6 +204,7 @@ def generate_next_question(
     gaya: str = "seimbang",
     kedalaman: str = "ringkas",
     bahasa: str = "formal",
+    output_language: str = "id",
     allow_followup: bool = False,
     last_persona: str | None = None,
     last_pertanyaan: str | None = None,
@@ -213,6 +225,7 @@ def generate_next_question(
             "gaya": gaya,
             "kedalaman": kedalaman,
             "bahasa": bahasa,
+            "output_language": output_language,
             "allow_followup": allow_followup,
             "last_persona": last_persona,
             "last_pertanyaan": last_pertanyaan,

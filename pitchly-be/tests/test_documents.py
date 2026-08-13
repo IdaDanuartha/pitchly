@@ -47,7 +47,7 @@ async def test_upload_then_get(client):
 async def test_foreign_document_forbidden(client):
     h1 = await _auth_headers(client, "a@primakara.ac.id")
     up = await client.post(
-        "/documents", files={"file": ("p.pdf", b"data")}, headers=h1
+        "/documents", files={"file": ("p.pdf", b"%PDF-1.4 data")}, headers=h1
     )
     doc_id = up.json()["id"]
 
@@ -75,11 +75,12 @@ async def test_analyze_persists_findings(client, monkeypatch):
     import app.api.documents as documents_module
 
     monkeypatch.setattr(documents_module, "extract_text", lambda data: "teks proposal")
+    monkeypatch.setattr(documents_module, "extract_pages", lambda data: ["teks proposal"])
     override_llm(_ANALYSIS_JSON)
 
     headers = await _auth_headers(client)
     up = await client.post(
-        "/documents", files={"file": ("p.pdf", b"%PDF data")}, headers=headers
+        "/documents", files={"file": ("p.pdf", b"%PDF-1.4 data")}, headers=headers
     )
     doc_id = up.json()["id"]
 

@@ -20,7 +20,7 @@ from app.agents.scorecard_graph import ScorecardError, compile_scorecard
 from app.agents.suggestion_graph import SuggestionError, suggest_answers
 from app.api.deps import get_current_user, get_llm
 from app.services.vision import OpenAIVision, VisionError, get_vision
-from app.core.config import DEFAULT_RUBRIC_KRITERIA
+from app.core.config import DEFAULT_RUBRIC_BOBOT, DEFAULT_RUBRIC_KRITERIA
 from app.core.plans import effective_plan, entitlements
 from app.db.session import get_db
 from app.llm import LLMClient
@@ -163,6 +163,7 @@ def _public(sess: Session, turns: list[SessionTurn]) -> SessionPublic:
         gaya=sess.gaya,
         kedalaman=sess.kedalaman,
         bahasa=sess.bahasa,
+        output_language=sess.output_language,
         jenis=sess.jenis,
         kategori=sess.kategori,
         dengan_presentasi=sess.dengan_presentasi,
@@ -217,6 +218,33 @@ async def _rubric_kriteria(sess: Session, db: DBSession) -> list[str]:
     return list(ctx_default or DEFAULT_RUBRIC_KRITERIA)
 
 
+async def _rubric_bobot(sess: Session, db: DBSession) -> dict | None:
+    """Per-criterion weights, if an uploaded rubric provides them; else the
+    global default weights when the global default criteria are in use."""
+    if sess.rubric_id:
+        rubric = await db.get(CompetitionRubric, sess.rubric_id)
+        if rubric and rubric.bobot_json:
+            return dict(rubric.bobot_json)
+    # Context defaults have no explicit weights → equal weighting (None). The
+    # global default rubric ships with weights.
+    if default_kriteria_for(sess.jenis, sess.kategori) is None:
+        return dict(DEFAULT_RUBRIC_BOBOT)
+    return None
+
+
+def _weighted_score(skor: dict, bobot: dict | None) -> int:
+    """Weighted average of category scores; equal weights when bobot is None."""
+    if not skor:
+        return 0
+    if bobot:
+        total_w = sum(float(bobot.get(k, 0)) for k in skor)
+        if total_w > 0:
+            return round(
+                sum(int(v) * float(bobot.get(k, 0)) for k, v in skor.items()) / total_w
+            )
+    return round(sum(int(v) for v in skor.values()) / len(skor))
+
+
 async def _analysis_findings(sess: Session, db: DBSession) -> list[dict]:
     if not sess.document_id:
         return []
@@ -254,8 +282,15 @@ async def create_session(
     ent = entitlements(plan)
     kuota = ent["sesi_kuota"]
     if kuota is not None:
+        # Count only sessions the user actually used up (reached the scorecard
+        # stage or finished), so abandoned/aborted sessions don't burn quota.
         dipakai = await db.scalar(
-            select(func.count()).select_from(Session).where(Session.user_id == user.id)
+            select(func.count())
+            .select_from(Session)
+            .where(
+                Session.user_id == user.id,
+                Session.status.in_(("menunggu_scorecard", "selesai")),
+            )
         )
         if int(dipakai or 0) >= kuota:
             raise HTTPException(
@@ -305,6 +340,7 @@ async def create_session(
         gaya=payload.gaya,
         kedalaman=payload.kedalaman,
         bahasa=payload.bahasa,
+        output_language=payload.output_language,
         durasi_menit=payload.durasi_menit,
         mulai_pada=datetime.now(timezone.utc),
     )
@@ -369,7 +405,11 @@ async def list_sessions(
                 nama_kompetisi=rubric.nama_kompetisi if rubric else "Rubrik umum",
                 mode=s.mode,
                 status=s.status,
-                skor_rata_rata=_avg_score(sc.skor_per_kategori_json) if sc else None,
+                skor_rata_rata=(
+                    (sc.skor_akhir if sc.skor_akhir is not None
+                     else _avg_score(sc.skor_per_kategori_json))
+                    if sc else None
+                ),
                 created_at=s.created_at,
             )
         )
@@ -403,7 +443,11 @@ async def overview(
         sc = await db.scalar(
             select(Scorecard).where(Scorecard.session_id == latest.id)
         )
-        skor_terakhir = _avg_score(sc.skor_per_kategori_json) if sc else None
+        skor_terakhir = (
+            (sc.skor_akhir if sc.skor_akhir is not None
+             else _avg_score(sc.skor_per_kategori_json))
+            if sc else None
+        )
 
     return OverviewResponse(
         total_sesi=len(sessions),
@@ -595,6 +639,7 @@ async def next_turn(
             gaya=sess.gaya,
             kedalaman=sess.kedalaman,
             bahasa=sess.bahasa,
+            output_language=sess.output_language,
             allow_followup=allow_followup,
             last_persona=last.persona if last else None,
             last_pertanyaan=last.pertanyaan if last else None,
@@ -711,6 +756,7 @@ async def build_scorecard(
             transcript=transcript,
             client=llm,
             presentasi_transkrip=sess.presentasi_transkrip,
+            output_language=sess.output_language,
         )
     except ScorecardError as exc:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, str(exc)) from exc
@@ -720,9 +766,11 @@ async def build_scorecard(
             f"Model AI gagal merespons (GPT & Gemini). Periksa API key/model. {exc}",
         ) from exc
 
+    bobot = await _rubric_bobot(sess, db)
     scorecard = Scorecard(
         session_id=sess.id,
         skor_per_kategori_json=result.skor_per_kategori,
+        skor_akhir=_weighted_score(result.skor_per_kategori, bobot),
         ringkasan_kekuatan=result.ringkasan_kekuatan,
         ringkasan_kelemahan=result.ringkasan_kelemahan,
         rencana_perbaikan_json=result.rencana_perbaikan,
@@ -796,6 +844,7 @@ async def record_outcome(
             kritik_juri_asli=payload.kritik_juri_asli,
             hasil=payload.hasil,
             client=llm,
+            output_language=sess.output_language,
         )
         analisis = {
             "akurasi_persen": result.akurasi_persen,
@@ -902,6 +951,7 @@ async def answer_suggestions(
             analysis_findings=findings,
             rubric_kriteria=kriteria,
             client=llm,
+            output_language=sess.output_language,
         )
     except SuggestionError as exc:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, str(exc)) from exc

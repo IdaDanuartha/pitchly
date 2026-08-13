@@ -4,6 +4,8 @@ from typing import Any, TypedDict
 
 from langgraph.graph import END, START, StateGraph
 
+from app.agents.language import language_directive
+from app.agents.safety import SAFETY_NOTICE, wrap_untrusted
 from app.llm.client import LLMClient
 
 
@@ -24,6 +26,7 @@ class CalibrationState(TypedDict, total=False):
     prediksi_rencana: list[str]
     kritik_juri_asli: str
     hasil: str
+    output_language: str
     client: LLMClient
     result: CalibrationResult
 
@@ -44,7 +47,7 @@ def _compare(state: CalibrationState) -> dict[str, Any]:
         f"Ringkasan kelemahan: {state.get('prediksi_kelemahan')}\n"
         f"Rencana perbaikan yang disarankan:\n{rencana or '- (tidak ada)'}\n\n"
         "== Kenyataan ==\n"
-        f"Kritik juri asli: {state.get('kritik_juri_asli')}\n"
+        f"{wrap_untrusted('Kritik juri asli:', state.get('kritik_juri_asli'))}\n"
         f"Hasil akhir: {state.get('hasil')}\n\n"
         "Balas HANYA JSON valid:\n"
         "{\n"
@@ -55,7 +58,10 @@ def _compare(state: CalibrationState) -> dict[str, Any]:
         "}"
     )
     client: LLMClient = state["client"]
-    raw = client.complete(prompt, system=SYSTEM, json_mode=True)
+    directive = language_directive(state.get("output_language"))
+    raw = client.complete(
+        prompt, system=f"{SYSTEM}\n{SAFETY_NOTICE}\n{directive}", json_mode=True
+    )
 
     try:
         data = json.loads(raw)
@@ -93,6 +99,7 @@ def compile_calibration(
     kritik_juri_asli: str,
     hasil: str,
     client: LLMClient,
+    output_language: str = "id",
 ) -> CalibrationResult:
     result = _CALIBRATION.invoke(
         {
@@ -100,6 +107,7 @@ def compile_calibration(
             "prediksi_rencana": prediksi_rencana,
             "kritik_juri_asli": kritik_juri_asli,
             "hasil": hasil,
+            "output_language": output_language,
             "client": client,
         }
     )

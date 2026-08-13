@@ -24,6 +24,13 @@ class Settings(BaseSettings):
     tts_model: str = "gpt-4o-mini-tts"
     vision_model: str = "gpt-4o"
 
+    # Upload limits (documents are PDF only).
+    max_upload_mb: int = 20
+
+    # TTS response cache (identical text+persona+gaya reuses stored mp3).
+    tts_cache_enabled: bool = True
+    tts_cache_dir: str = ""  # empty = <system temp>/pitchly-tts-cache
+
     # Azure Speech (TTS Indonesia native) — primary bila diisi, fallback OpenAI.
     azure_speech_key: str = ""
     azure_region: str = "southeastasia"
@@ -41,6 +48,10 @@ class Settings(BaseSettings):
     did_voice_teknis: str = "id-ID-ArdiNeural"
     did_voice_dampak: str = "id-ID-GadisNeural"
     did_voice_skeptis: str = "id-ID-ArdiNeural"
+    # English (en-US) voices so English judge text is pronounced correctly.
+    did_voice_teknis_en: str = "en-US-GuyNeural"
+    did_voice_dampak_en: str = "en-US-JennyNeural"
+    did_voice_skeptis_en: str = "en-US-GuyNeural"
 
     def did_source(self, persona: str) -> str:
         return {
@@ -49,7 +60,13 @@ class Settings(BaseSettings):
             "skeptis": self.did_source_skeptis,
         }.get(persona, self.did_source_teknis)
 
-    def did_voice(self, persona: str) -> str:
+    def did_voice(self, persona: str, output_language: str = "id") -> str:
+        if output_language == "en":
+            return {
+                "teknis": self.did_voice_teknis_en,
+                "dampak": self.did_voice_dampak_en,
+                "skeptis": self.did_voice_skeptis_en,
+            }.get(persona, self.did_voice_teknis_en)
         return {
             "teknis": self.did_voice_teknis,
             "dampak": self.did_voice_dampak,

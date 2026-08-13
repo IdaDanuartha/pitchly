@@ -14,6 +14,7 @@ class TalkRequest(BaseModel):
     text: str = Field(min_length=1, max_length=2000)
     persona: str = "teknis"
     gaya: str = "seimbang"
+    output_language: str = "id"
 
 
 class TalkResponse(BaseModel):
@@ -31,7 +32,11 @@ async def talk(
         return TalkResponse(enabled=False, video_url=None)
     try:
         url = await run_in_threadpool(
-            create_talk, payload.text, payload.persona, payload.gaya
+            create_talk,
+            payload.text,
+            payload.persona,
+            payload.gaya,
+            payload.output_language,
         )
     except DIDError as exc:
         raise HTTPException(status.HTTP_502_BAD_GATEWAY, str(exc)) from exc

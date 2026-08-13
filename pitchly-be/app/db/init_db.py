@@ -30,6 +30,7 @@ _ENSURE_COLUMNS = [
     ("sessions", "gaya", "VARCHAR DEFAULT 'seimbang' NOT NULL"),
     ("sessions", "kedalaman", "VARCHAR DEFAULT 'ringkas' NOT NULL"),
     ("sessions", "bahasa", "VARCHAR DEFAULT 'formal' NOT NULL"),
+    ("sessions", "output_language", "VARCHAR DEFAULT 'id' NOT NULL"),
     ("sessions", "ronde", "INTEGER DEFAULT 2 NOT NULL"),
     ("sessions", "durasi_menit", "INTEGER DEFAULT 15 NOT NULL"),
     ("sessions", "jeda_pada", "TIMESTAMPTZ"),
@@ -47,6 +48,7 @@ _ENSURE_COLUMNS = [
     ("scorecards", "pacing_json", "JSONB"),
     ("scorecards", "penilaian_presentasi_json", "JSONB"),
     ("scorecards", "saran_jawaban_json", "JSONB"),
+    ("scorecards", "skor_akhir", "INTEGER"),
 ]
 
 

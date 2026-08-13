@@ -7,6 +7,16 @@ def _override_llm():
     app.dependency_overrides[get_llm] = lambda: BranchingLLM()
 
 
+async def _activate_tim(client, headers):
+    """Team sessions require the 'tim' entitlement (mock checkout)."""
+    res = await client.post(
+        "/billing/subscribe",
+        json={"plan_id": "tim", "interval": "monthly"},
+        headers=headers,
+    )
+    assert res.status_code == 200, res.text
+
+
 async def test_team_crud(client):
     headers = await _auth_headers(client, "lead@primakara.ac.id")
     create = await client.post("/teams", json={"nama_tim": "ASTAGA REG"}, headers=headers)
@@ -48,6 +58,7 @@ async def test_foreign_team_forbidden(client):
 async def test_team_session_targets_members(client, monkeypatch):
     _override_llm()
     headers = await _auth_headers(client, "timlead@primakara.ac.id")
+    await _activate_tim(client, headers)
     doc_id = await _analyzed_document(client, headers, monkeypatch)
 
     team = (
@@ -96,6 +107,7 @@ async def test_team_session_targets_members(client, monkeypatch):
 async def test_team_session_requires_member(client, monkeypatch):
     _override_llm()
     headers = await _auth_headers(client, "empty@primakara.ac.id")
+    await _activate_tim(client, headers)
     doc_id = await _analyzed_document(client, headers, monkeypatch)
     team = (
         await client.post("/teams", json={"nama_tim": "Kosong"}, headers=headers)

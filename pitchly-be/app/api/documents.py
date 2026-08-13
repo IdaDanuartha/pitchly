@@ -64,9 +64,31 @@ async def upload_document(
     user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ) -> Document:
+    # Validate type by extension + declared content type (documents are PDF only).
+    name = (file.filename or "").lower()
+    ctype = (file.content_type or "").lower()
+    if not name.endswith(".pdf") or (ctype and ctype != "application/pdf"):
+        raise HTTPException(
+            status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
+            "Hanya berkas PDF yang didukung.",
+        )
+
     data = await file.read()
     if not data:
         raise HTTPException(status.HTTP_400_BAD_REQUEST, "Berkas kosong")
+
+    max_bytes = settings.max_upload_mb * 1024 * 1024
+    if len(data) > max_bytes:
+        raise HTTPException(
+            status.HTTP_413_CONTENT_TOO_LARGE,
+            f"Ukuran berkas melebihi batas {settings.max_upload_mb} MB.",
+        )
+    # Verify actual PDF magic bytes, not just the declared type/extension.
+    if not data.startswith(b"%PDF"):
+        raise HTTPException(
+            status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
+            "Berkas bukan PDF yang valid.",
+        )
 
     storage = get_storage()
     key = f"{user.id}/{uuid.uuid4()}-{file.filename}"

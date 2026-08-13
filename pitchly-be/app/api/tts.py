@@ -14,6 +14,8 @@ class TTSRequest(BaseModel):
     text: str = Field(min_length=1, max_length=2000)
     persona: str = "teknis"
     gaya: str = "seimbang"
+    output_language: str = "id"
+    is_followup: bool = False
 
 
 @router.post("/tts")
@@ -24,7 +26,12 @@ async def synthesize(
 ) -> Response:
     try:
         audio = await run_in_threadpool(
-            tts.synthesize, payload.text, payload.persona, payload.gaya
+            tts.synthesize,
+            payload.text,
+            payload.persona,
+            payload.gaya,
+            payload.output_language,
+            payload.is_followup,
         )
     except TTSError as exc:
         raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, str(exc)) from exc

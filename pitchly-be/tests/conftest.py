@@ -11,6 +11,18 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 os.environ.setdefault("DATABASE_URL", "sqlite+aiosqlite:///:memory:")
 os.environ.setdefault("UPLOAD_DIR", tempfile.mkdtemp(prefix="pitchly-test-"))
 os.environ.setdefault("JWT_SECRET", "test-secret")
+# Keep tests hermetic: blank external-integration keys that would otherwise leak
+# in from a local .env file and flip feature flags (email verification, Google
+# OAuth, D-ID avatar, web search, at-rest encryption) to "enabled".
+for _leak in (
+    "RESEND_API_KEY",
+    "GOOGLE_CLIENT_ID",
+    "GOOGLE_CLIENT_SECRET",
+    "DID_API_KEY",
+    "TAVILY_API_KEY",
+    "DOCUMENT_ENCRYPTION_KEY",
+):
+    os.environ[_leak] = ""
 
 from app.api.deps import get_llm  # noqa: E402
 from app.db.base import Base  # noqa: E402

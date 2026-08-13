@@ -4,6 +4,8 @@ from typing import Any, TypedDict
 
 from langgraph.graph import END, START, StateGraph
 
+from app.agents.language import language_directive
+from app.agents.safety import SAFETY_NOTICE, sanitize, wrap_untrusted
 from app.llm.client import LLMClient
 
 
@@ -25,6 +27,7 @@ class ScorecardState(TypedDict, total=False):
     rubric_kriteria: list[str]
     transcript: list[dict]
     presentasi_transkrip: str | None
+    output_language: str
     client: LLMClient
     result: ScorecardResult
 
@@ -46,9 +49,10 @@ def _format_transcript(transcript: list[dict]) -> str:
             extra += f"\nDelivery: {t['delivery']}"
         if t.get("ekspresi"):
             extra += f"\nBahasa tubuh: {t['ekspresi']}"
+        jawab = sanitize(t.get("jawaban"), 2000) or "(tidak dijawab)"
         blocks.append(
             f"[{t['persona']}] Tanya: {t['pertanyaan']}\n"
-            f"Jawab: {t.get('jawaban') or '(tidak dijawab)'}{extra}"
+            f"Jawab: {jawab}{extra}"
         )
     return "\n\n".join(blocks)
 
@@ -56,12 +60,13 @@ def _format_transcript(transcript: list[dict]) -> str:
 def _compile(state: ScorecardState) -> dict[str, Any]:
     kriteria = state.get("rubric_kriteria") or ["Kualitas jawaban keseluruhan"]
     presentasi = (state.get("presentasi_transkrip") or "").strip()
-    presentasi_block = (
+    _pres_block = wrap_untrusted(
         "Transkrip presentasi lisan peserta (nilai juga kejelasan, struktur, dan "
-        f"kelengkapan penyampaian):\n{presentasi[:6000]}\n\n"
-        if presentasi
-        else ""
+        "kelengkapan penyampaian):",
+        presentasi,
+        limit=6000,
     )
+    presentasi_block = f"{_pres_block}\n\n" if _pres_block else ""
     presentasi_field = (
         '  "penilaian_presentasi": {\n'
         '    "skor": <0-100 kualitas presentasi lisan>,\n'
@@ -95,7 +100,10 @@ def _compile(state: ScorecardState) -> dict[str, Any]:
         f"{presentasi_instruksi}"
     )
     client: LLMClient = state["client"]
-    raw = client.complete(prompt, system=SYSTEM, json_mode=True)
+    directive = language_directive(state.get("output_language"))
+    raw = client.complete(
+        prompt, system=f"{SYSTEM}\n{SAFETY_NOTICE}\n{directive}", json_mode=True
+    )
 
     try:
         data = json.loads(raw)
@@ -135,12 +143,14 @@ def compile_scorecard(
     transcript: list[dict],
     client: LLMClient,
     presentasi_transkrip: str | None = None,
+    output_language: str = "id",
 ) -> ScorecardResult:
     result = _SCORECARD.invoke(
         {
             "rubric_kriteria": rubric_kriteria,
             "transcript": transcript,
             "presentasi_transkrip": presentasi_transkrip,
+            "output_language": output_language,
             "client": client,
         }
     )

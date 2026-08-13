@@ -19,7 +19,9 @@ _GAYA_STYLE = {
 }
 
 
-def create_talk(text: str, persona: str, gaya: str = "seimbang") -> str:
+def create_talk(
+    text: str, persona: str, gaya: str = "seimbang", output_language: str = "id"
+) -> str:
     """Create a D-ID talk and poll until the lip-synced video is ready.
 
     Returns the result video URL. Raises DIDError if not configured or on failure.
@@ -30,7 +32,7 @@ def create_talk(text: str, persona: str, gaya: str = "seimbang") -> str:
     if not source:
         raise DIDError(f"Sumber gambar D-ID untuk persona '{persona}' belum diatur")
 
-    voice_id = settings.did_voice(persona)
+    voice_id = settings.did_voice(persona, output_language)
     style = _GAYA_STYLE.get(gaya, "")
     voice_config = {"style": style} if style else {}
 

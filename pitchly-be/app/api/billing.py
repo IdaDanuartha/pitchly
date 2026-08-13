@@ -5,11 +5,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_user
 from app.core.plans import (
-    PLAN_CATALOG,
     PLAN_IDS,
     effective_plan,
     entitlements,
     period_end,
+    plan_catalog,
 )
 from app.db.session import get_db
 from app.models.session import Session
@@ -26,8 +26,14 @@ class SubscribeRequest(BaseModel):
 async def _billing_state(user: User, db: AsyncSession) -> dict:
     plan = effective_plan(user.plan, user.plan_expires_at)
     ent = entitlements(plan)
+    # Mirror create_session: only used-up sessions count toward the quota.
     dipakai = await db.scalar(
-        select(func.count()).select_from(Session).where(Session.user_id == user.id)
+        select(func.count())
+        .select_from(Session)
+        .where(
+            Session.user_id == user.id,
+            Session.status.in_(("menunggu_scorecard", "selesai")),
+        )
     )
     return {
         "plan": plan,
@@ -39,8 +45,8 @@ async def _billing_state(user: User, db: AsyncSession) -> dict:
 
 
 @router.get("/plans")
-async def list_plans() -> dict:
-    return {"plans": PLAN_CATALOG}
+async def list_plans(lang: str = "id") -> dict:
+    return {"plans": plan_catalog(lang)}
 
 
 @router.get("/me")

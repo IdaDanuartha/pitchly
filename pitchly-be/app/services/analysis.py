@@ -3,6 +3,7 @@ import re
 
 from pydantic import ValidationError
 
+from app.agents.safety import SAFETY_NOTICE, sanitize
 from app.llm.client import LLMClient
 from app.schemas.analysis import Finding
 
@@ -11,7 +12,8 @@ SYSTEM_PROMPT = (
     "deck peserta. Tugas Anda menemukan kelemahan substantif sebelum sesi tanya "
     "jawab. Fokus pada tiga bagian: problem_statement (kejelasan & urgensi "
     "masalah), kelayakan_teknis (apakah solusi realistis dibangun), dan dampak "
-    "(manfaat & skalabilitas). Nada presisi dan membumi, tanpa hiperbola."
+    "(manfaat & skalabilitas). Nada presisi dan membumi, tanpa hiperbola.\n"
+    + SAFETY_NOTICE
 )
 
 USER_TEMPLATE = """Analisis dokumen berikut dan kembalikan MINIMAL 3 temuan kelemahan.
@@ -79,8 +81,9 @@ def analyze_document(
 ) -> list[Finding]:
     if not text.strip():
         raise AnalysisError("Dokumen kosong, tidak ada teks untuk dianalisis")
-    # Cap payload to keep latency/token use bounded (~15 pages).
-    document = text[:24000]
+    # Cap payload to keep latency/token use bounded (~15 pages). Neutralize any
+    # injection markers embedded in the document before feeding it to the LLM.
+    document = sanitize(text, 24000)
     raw = client.complete(
         USER_TEMPLATE.format(document=document),
         system=SYSTEM_PROMPT,

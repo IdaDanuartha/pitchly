@@ -27,7 +27,9 @@ async def test_talk_enabled_returns_video(client, monkeypatch):
     monkeypatch.setattr(settings, "did_api_key", "key")
     monkeypatch.setattr(settings, "did_source_teknis", "https://img/face.jpg")
     monkeypatch.setattr(
-        avatar_module, "create_talk", lambda text, persona, gaya: "https://d-id/vid.mp4"
+        avatar_module,
+        "create_talk",
+        lambda text, persona, gaya, output_language="id": "https://d-id/vid.mp4",
     )
 
     headers = await _auth_headers(client, "did2@primakara.ac.id")

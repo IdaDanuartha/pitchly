@@ -3,6 +3,8 @@ from typing import Any, TypedDict
 
 from langgraph.graph import END, START, StateGraph
 
+from app.agents.language import language_directive
+from app.agents.safety import SAFETY_NOTICE, sanitize
 from app.llm.client import LLMClient
 
 
@@ -14,6 +16,7 @@ class SuggestionState(TypedDict, total=False):
     transcript: list[dict]  # [{urutan, persona, pertanyaan, jawaban}]
     analysis_findings: list[dict]
     rubric_kriteria: list[str]
+    output_language: str
     client: LLMClient
     result: list[dict]
 
@@ -29,9 +32,10 @@ SYSTEM = (
 def _format(transcript: list[dict]) -> str:
     blocks = []
     for t in transcript:
+        jawab = sanitize(t.get("jawaban"), 2000) or "(tidak dijawab)"
         blocks.append(
             f"[{t.get('urutan')}] ({t.get('persona')}) Tanya: {t.get('pertanyaan')}\n"
-            f"Jawaban peserta: {t.get('jawaban') or '(tidak dijawab)'}"
+            f"Jawaban peserta: {jawab}"
         )
     return "\n\n".join(blocks)
 
@@ -59,7 +63,10 @@ def _suggest(state: SuggestionState) -> dict[str, Any]:
         "Sertakan satu item untuk tiap pertanyaan sesuai urutannya."
     )
     client: LLMClient = state["client"]
-    raw = client.complete(prompt, system=SYSTEM, json_mode=True)
+    directive = language_directive(state.get("output_language"))
+    raw = client.complete(
+        prompt, system=f"{SYSTEM}\n{SAFETY_NOTICE}\n{directive}", json_mode=True
+    )
 
     try:
         data = json.loads(raw)
@@ -95,12 +102,14 @@ def suggest_answers(
     analysis_findings: list[dict],
     rubric_kriteria: list[str],
     client: LLMClient,
+    output_language: str = "id",
 ) -> list[dict]:
     result = _SUGGESTION.invoke(
         {
             "transcript": transcript,
             "analysis_findings": analysis_findings,
             "rubric_kriteria": rubric_kriteria,
+            "output_language": output_language,
             "client": client,
         }
     )

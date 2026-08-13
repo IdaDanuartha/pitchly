@@ -25,7 +25,7 @@ def test_persona_round_robin():
 
 
 def test_panel_generates_question_for_persona():
-    persona, pertanyaan = generate_next_question(
+    persona, pertanyaan, is_followup = generate_next_question(
         urutan=2,
         analysis_findings=[{"bagian": "dampak", "temuan": "x"}],
         rubric_kriteria=["Dampak"],
@@ -34,6 +34,7 @@ def test_panel_generates_question_for_persona():
     )
     assert persona == "dampak"
     assert pertanyaan == "Seberapa besar dampaknya?"
+    assert is_followup is False
 
 
 _SCORE_JSON = json.dumps(

@@ -57,8 +57,9 @@ async def _analyzed_document(client, headers, monkeypatch):
     import app.api.documents as documents_module
 
     monkeypatch.setattr(documents_module, "extract_text", lambda data: "teks proposal")
+    monkeypatch.setattr(documents_module, "extract_pages", lambda data: ["teks proposal"])
     up = await client.post(
-        "/documents", files={"file": ("p.pdf", b"%PDF data")}, headers=headers
+        "/documents", files={"file": ("p.pdf", b"%PDF-1.4 data")}, headers=headers
     )
     doc_id = up.json()["id"]
     await client.post(f"/documents/{doc_id}/analyze", headers=headers)

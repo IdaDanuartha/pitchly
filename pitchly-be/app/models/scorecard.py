@@ -19,6 +19,8 @@ class Scorecard(TimestampMixin, Base):
         nullable=False,
     )
     skor_per_kategori_json: Mapped[dict] = mapped_column(JsonType, nullable=False)
+    # Weighted final score using the rubric's bobot (weights). Null on legacy rows.
+    skor_akhir: Mapped[int | None] = mapped_column(nullable=True)
     ringkasan_kekuatan: Mapped[str] = mapped_column(nullable=False)
     ringkasan_kelemahan: Mapped[str] = mapped_column(nullable=False)
     rencana_perbaikan_json: Mapped[list] = mapped_column(JsonType, nullable=False)

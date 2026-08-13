@@ -28,52 +28,93 @@ ENTITLEMENTS: dict[str, dict] = {
     },
 }
 
-# Catalog shown on the pricing page (harga in IDR).
-PLAN_CATALOG = [
-    {
-        "id": "free",
-        "nama": "Free",
-        "deskripsi": "Coba Pitchly tanpa biaya.",
-        "harga_bulanan": 0,
-        "harga_tahunan": 0,
-        "fitur": [
-            "2 sesi latihan (total)",
-            "Panel juri multi-persona",
-            "Mode individu · tanya jawab",
-            "Scorecard & rencana perbaikan",
-        ],
-    },
-    {
-        "id": "pro",
-        "nama": "Pro",
-        "deskripsi": "Untuk peserta serius yang berlatih rutin.",
-        "harga_bulanan": 49000,
-        "harga_tahunan": 490000,
-        "fitur": [
-            "Sesi latihan tak terbatas",
-            "Fase presentasi + berbagi layar",
-            "Semua kategori kompetisi & akademik",
-            "Kalibrasi pasca-kompetisi",
-            "Cek orisinalitas via pencarian web",
-            "Analisis pola kelemahan lintas sesi",
-        ],
-    },
-    {
-        "id": "tim",
-        "nama": "Tim",
-        "deskripsi": "Untuk tim kompetisi & unit kemahasiswaan.",
-        "harga_bulanan": 99000,
-        "harga_tahunan": 990000,
-        "fitur": [
-            "Semua fitur Pro",
-            "Mode simulasi tim (lintas peran)",
-            "Kelola anggota tim",
-            "Prioritas dukungan",
-        ],
-    },
+# Pricing is language-neutral (harga in IDR); nama is a brand label kept as-is.
+PLAN_PRICING = [
+    {"id": "free", "nama": "Free", "harga_bulanan": 0, "harga_tahunan": 0},
+    {"id": "pro", "nama": "Pro", "harga_bulanan": 49000, "harga_tahunan": 490000},
+    {"id": "tim", "nama": "Tim", "harga_bulanan": 99000, "harga_tahunan": 990000},
 ]
 
-PLAN_IDS = {p["id"] for p in PLAN_CATALOG}
+# Localized copy (deskripsi + fitur) per plan id.
+PLAN_TEXT: dict[str, dict[str, dict]] = {
+    "id": {
+        "free": {
+            "deskripsi": "Coba Pitchly tanpa biaya.",
+            "fitur": [
+                "2 sesi latihan (total)",
+                "Panel juri multi-persona",
+                "Mode individu · tanya jawab",
+                "Scorecard & rencana perbaikan",
+            ],
+        },
+        "pro": {
+            "deskripsi": "Untuk peserta serius yang berlatih rutin.",
+            "fitur": [
+                "Sesi latihan tak terbatas",
+                "Fase presentasi + berbagi layar",
+                "Semua kategori kompetisi & akademik",
+                "Kalibrasi pasca-kompetisi",
+                "Cek orisinalitas via pencarian web",
+                "Analisis pola kelemahan lintas sesi",
+            ],
+        },
+        "tim": {
+            "deskripsi": "Untuk tim kompetisi & unit kemahasiswaan.",
+            "fitur": [
+                "Semua fitur Pro",
+                "Mode simulasi tim (lintas peran)",
+                "Kelola anggota tim",
+                "Prioritas dukungan",
+            ],
+        },
+    },
+    "en": {
+        "free": {
+            "deskripsi": "Try Pitchly at no cost.",
+            "fitur": [
+                "2 practice sessions (total)",
+                "Multi-persona judge panel",
+                "Individual mode · Q&A",
+                "Scorecard & improvement plan",
+            ],
+        },
+        "pro": {
+            "deskripsi": "For serious contestants who practice regularly.",
+            "fitur": [
+                "Unlimited practice sessions",
+                "Presentation phase + screen sharing",
+                "All competition & academic categories",
+                "Post-competition calibration",
+                "Originality check via web search",
+                "Recurring-weakness analysis across sessions",
+            ],
+        },
+        "tim": {
+            "deskripsi": "For competition teams & student units.",
+            "fitur": [
+                "Everything in Pro",
+                "Team simulation mode (cross-role)",
+                "Manage team members",
+                "Priority support",
+            ],
+        },
+    },
+}
+
+PLAN_IDS = {p["id"] for p in PLAN_PRICING}
+
+
+def plan_catalog(lang: str = "id") -> list[dict]:
+    """Assemble the pricing catalog with localized copy."""
+    text = PLAN_TEXT.get(lang, PLAN_TEXT["id"])
+    return [
+        {**p, "deskripsi": text[p["id"]]["deskripsi"], "fitur": text[p["id"]]["fitur"]}
+        for p in PLAN_PRICING
+    ]
+
+
+# Backward-compatible default (Indonesian) for any importer expecting a list.
+PLAN_CATALOG = plan_catalog("id")
 
 
 def entitlements(plan: str) -> dict:

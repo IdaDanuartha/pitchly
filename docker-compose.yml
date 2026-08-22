@@ -39,13 +39,13 @@ services:
       DID_SOURCE_TEKNIS: ${DID_SOURCE_TEKNIS:-}
       DID_SOURCE_DAMPAK: ${DID_SOURCE_DAMPAK:-}
       DID_SOURCE_SKEPTIS: ${DID_SOURCE_SKEPTIS:-}
-      FRONTEND_ORIGIN: ${FRONTEND_ORIGIN:-http://localhost:3010}
+      FRONTEND_ORIGIN: ${FRONTEND_ORIGIN:-https://pitchly.codewithdanu.my.id}
       RESEND_API_KEY: ${RESEND_API_KEY:-}
       EMAIL_FROM: ${EMAIL_FROM:-Pitchly <onboarding@resend.dev>}
-      APP_BASE_URL: ${APP_BASE_URL:-http://localhost:3010}
+      APP_BASE_URL: ${APP_BASE_URL:-https://pitchly.codewithdanu.my.id}
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
-      GOOGLE_REDIRECT_URI: ${GOOGLE_REDIRECT_URI:-http://localhost:3010/auth/google/callback}
+      GOOGLE_REDIRECT_URI: ${GOOGLE_REDIRECT_URI:-https://pitchly.codewithdanu.my.id/auth/google/callback}
     volumes:
       - uploads:/data/uploads
       - chroma:/data/chroma

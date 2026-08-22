@@ -1,0 +1,66 @@
+@import "tailwindcss";
+
+@theme {
+  /* Palet Ruang Sidang (PRD §8.4) */
+  --color-ink-navy: #0e1420;
+  --color-warm-paper: #f7f4ee;
+  --color-spotlight-amber: #b87a1e;
+  --color-growth-teal: #2f6f63;
+  --color-critique-rust: #9c4221;
+  --color-ink-gray: #6b6558;
+
+  /* Turunan halus untuk latar & garis */
+  --color-navy-soft: #1a2230;
+  --color-navy-line: #2a3340;
+  --color-paper-line: #e5ded2;
+  --color-paper-soft: #efe9dd;
+
+  --font-display: var(--font-fraunces);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-ibm-plex-mono);
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  background: var(--color-warm-paper);
+  color: var(--color-ink-navy);
+  font-family: var(--font-sans);
+}
+
+::selection {
+  background: color-mix(in srgb, var(--color-spotlight-amber) 28%, transparent);
+}
+
+/* Visible keyboard-focus ring for all interactive elements (a11y). Mouse
+   clicks don't trigger :focus-visible, so this stays out of the way of pointer
+   users while making tab navigation clear. */
+:focus-visible {
+  outline: 2px solid var(--color-spotlight-amber);
+  outline-offset: 2px;
+  border-radius: 1px;
+}
+
+/* Respect users who prefer reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

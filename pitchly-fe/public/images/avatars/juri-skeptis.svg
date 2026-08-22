@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="240" height="240">
+  <defs>
+    <clipPath id="c3"><circle cx="120" cy="120" r="120"/></clipPath>
+  </defs>
+  <g clip-path="url(#c3)">
+    <rect width="240" height="240" fill="#1f1613"/>
+    <rect width="240" height="240" fill="#0e1420" opacity="0.45"/>
+    <!-- robe / shoulders -->
+    <path d="M40 240 Q40 176 120 172 Q200 176 200 240 Z" fill="#241a16"/>
+    <path d="M120 172 L104 240 L136 240 Z" fill="#0e1420"/>
+    <path d="M112 176 L120 202 L128 176 Z" fill="#9c4221"/>
+    <!-- neck -->
+    <rect x="108" y="150" width="24" height="26" rx="8" fill="#d3b78e"/>
+    <!-- head -->
+    <ellipse cx="120" cy="118" rx="46" ry="50" fill="#e4cfa9"/>
+    <!-- hair (short, receding) -->
+    <path d="M76 108 Q80 66 120 66 Q160 66 164 108 Q150 90 120 90 Q94 90 76 108 Z" fill="#3a3330"/>
+    <!-- beard shadow -->
+    <path d="M84 132 Q120 172 156 132 Q150 158 120 160 Q90 158 84 132 Z" fill="#cbb089" opacity="0.5"/>
+    <!-- eyes narrowed -->
+    <path d="M96 118 Q101 114 108 118" fill="none" stroke="#1a1a1a" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="102" cy="119" r="2.5" fill="#1a1a1a"/>
+    <circle cx="138" cy="119" r="2.5" fill="#1a1a1a"/>
+    <!-- raised skeptical brow (one up) -->
+    <line x1="92" y1="102" x2="112" y2="108" stroke="#3a3330" stroke-width="3.5" stroke-linecap="round"/>
+    <line x1="150" y1="98" x2="128" y2="104" stroke="#3a3330" stroke-width="3.5" stroke-linecap="round"/>
+    <!-- nose -->
+    <path d="M120 124 L115 138 L125 138 Z" fill="#c2a781"/>
+    <!-- flat, doubtful mouth -->
+    <path d="M107 150 Q120 146 133 150" fill="none" stroke="#9c4221" stroke-width="3" stroke-linecap="round"/>
+  </g>
+  <circle cx="120" cy="120" r="118" fill="none" stroke="#2a3340" stroke-width="4"/>
+</svg>

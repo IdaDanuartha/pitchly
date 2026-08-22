@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="240" height="240">
+  <defs>
+    <clipPath id="c"><circle cx="120" cy="120" r="120"/></clipPath>
+  </defs>
+  <g clip-path="url(#c)">
+    <rect width="240" height="240" fill="#111a28"/>
+    <rect width="240" height="240" fill="#0e1420" opacity="0.4"/>
+    <!-- robe / shoulders -->
+    <path d="M40 240 Q40 176 120 172 Q200 176 200 240 Z" fill="#1a2230"/>
+    <path d="M120 172 L104 240 L136 240 Z" fill="#0e1420"/>
+    <path d="M112 176 L120 200 L128 176 Z" fill="#b87a1e"/>
+    <!-- neck -->
+    <rect x="108" y="150" width="24" height="26" rx="8" fill="#d9c3a3"/>
+    <!-- head -->
+    <ellipse cx="120" cy="118" rx="46" ry="50" fill="#e7d3b3"/>
+    <!-- hair -->
+    <path d="M74 112 Q74 62 120 62 Q166 62 166 112 Q150 92 120 92 Q90 92 74 112 Z" fill="#2b2622"/>
+    <!-- glasses (analytical) -->
+    <g stroke="#0e1420" stroke-width="3" fill="none">
+      <rect x="88" y="110" width="26" height="18" rx="4"/>
+      <rect x="126" y="110" width="26" height="18" rx="4"/>
+      <line x1="114" y1="118" x2="126" y2="118"/>
+    </g>
+    <!-- eyes -->
+    <circle cx="101" cy="119" r="3" fill="#1a1a1a"/>
+    <circle cx="139" cy="119" r="3" fill="#1a1a1a"/>
+    <!-- stern brow -->
+    <line x1="90" y1="104" x2="112" y2="108" stroke="#2b2622" stroke-width="3" stroke-linecap="round"/>
+    <line x1="150" y1="104" x2="128" y2="108" stroke="#2b2622" stroke-width="3" stroke-linecap="round"/>
+    <!-- nose + mouth -->
+    <path d="M120 124 L116 138 L124 138 Z" fill="#cbb089"/>
+    <line x1="108" y1="150" x2="132" y2="150" stroke="#9c4221" stroke-width="3" stroke-linecap="round"/>
+  </g>
+  <circle cx="120" cy="120" r="118" fill="none" stroke="#2a3340" stroke-width="4"/>
+</svg>

@@ -12,10 +12,11 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
-    ports:
-      - "5432:5432"
+    # Host port mapping not needed as backend connects via docker network (db:5432).
+    # If host access is needed, use port 5439:5432 to avoid collision.
 
   backend:
+    image: ghcr.io/idadanuartha/pitchly/pitchly-be:latest
     build: ./pitchly-be
     depends_on:
       db:
@@ -38,13 +39,13 @@ services:
       DID_SOURCE_TEKNIS: ${DID_SOURCE_TEKNIS:-}
       DID_SOURCE_DAMPAK: ${DID_SOURCE_DAMPAK:-}
       DID_SOURCE_SKEPTIS: ${DID_SOURCE_SKEPTIS:-}
-      FRONTEND_ORIGIN: ${FRONTEND_ORIGIN:-http://localhost:3000}
+      FRONTEND_ORIGIN: ${FRONTEND_ORIGIN:-http://localhost:3010}
       RESEND_API_KEY: ${RESEND_API_KEY:-}
       EMAIL_FROM: ${EMAIL_FROM:-Pitchly <onboarding@resend.dev>}
-      APP_BASE_URL: ${APP_BASE_URL:-http://localhost:3000}
+      APP_BASE_URL: ${APP_BASE_URL:-http://localhost:3010}
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
-      GOOGLE_REDIRECT_URI: ${GOOGLE_REDIRECT_URI:-http://localhost:3000/auth/google/callback}
+      GOOGLE_REDIRECT_URI: ${GOOGLE_REDIRECT_URI:-http://localhost:3010/auth/google/callback}
     volumes:
       - uploads:/data/uploads
       - chroma:/data/chroma
@@ -52,6 +53,7 @@ services:
       - "8000:8000"
 
   frontend:
+    image: ghcr.io/idadanuartha/pitchly/pitchly-fe:latest
     build:
       context: ./pitchly-fe
       args:
@@ -64,7 +66,7 @@ services:
       BACKEND_URL: http://backend:8000
       NODE_ENV: production
     ports:
-      - "3000:3000"
+      - "3010:3000"
 
 volumes:
   pgdata:

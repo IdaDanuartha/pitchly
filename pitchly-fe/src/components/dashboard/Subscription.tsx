@@ -7,7 +7,7 @@ import { Check } from "lucide-react";
 import { formatRupiah, type Billing, type Plan } from "@/lib/billing";
 import { useI18n } from "@/i18n/client";
 
-export function Langganan({
+export function Subscription({
   plans,
   billing,
 }: {
@@ -23,7 +23,7 @@ export function Langganan({
 
   function pilih(planId: string) {
     router.push(
-      `/dashboard/langganan/checkout?plan=${planId}&interval=${interval}`,
+      `/dashboard/subscription/checkout?plan=${planId}&interval=${interval}`,
     );
   }
 

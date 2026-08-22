@@ -4,7 +4,7 @@ import { getDictionary } from "@/i18n/server";
 
 const icons = [MessageCircleQuestion, Users, AlarmClock];
 
-export async function Masalah() {
+export async function Problems() {
   const dict = await getDictionary();
   const t = dict.landing.masalah;
   return (

@@ -66,7 +66,7 @@ export default function SesiBaruPage() {
       const ana = await anaRes.json();
       if (!anaRes.ok) throw new Error(ana.detail ?? ana.error ?? t.errAnalyzeFailed);
 
-      router.push(`/dashboard/dokumen/${doc.id}/analisis`);
+      router.push(`/dashboard/documents/${doc.id}/analysis`);
     } catch (e) {
       setStep("ringkasan");
       setError(e instanceof Error ? e.message : dict.common.error);

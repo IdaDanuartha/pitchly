@@ -8,7 +8,7 @@ import { useI18n } from "@/i18n/client";
 const ICONS = [Gavel, Rocket, SearchX];
 const SCORE_VALUES = [62, 74, 55, 68] as const;
 
-export function DemoSimulasi() {
+export function DemoSimulation() {
   const { dict } = useI18n();
   const t = dict.landing.demo;
   const STEPS = t.steps;

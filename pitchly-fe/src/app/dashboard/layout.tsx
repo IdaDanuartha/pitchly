@@ -8,7 +8,7 @@ export default async function DashboardLayout({
   children,
 }: LayoutProps<"/dashboard">) {
   const user = await getCurrentUser();
-  if (!user) redirect("/masuk");
+  if (!user) redirect("/login");
 
   return (
     <div className="flex min-h-screen flex-col md:flex-row">

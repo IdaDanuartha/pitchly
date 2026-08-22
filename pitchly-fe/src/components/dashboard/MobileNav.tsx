@@ -21,7 +21,7 @@ export function MobileNav({ nama }: { nama: string }) {
   async function logout() {
     setLoggingOut(true);
     await fetch("/api/auth/logout", { method: "POST" });
-    router.push("/masuk");
+    router.push("/login");
     router.refresh();
   }
 

@@ -7,7 +7,7 @@ import { Check } from "lucide-react";
 import { formatRupiah, type Plan } from "@/lib/billing";
 import { useI18n } from "@/i18n/client";
 
-export function Harga({ plans }: { plans: Plan[] }) {
+export function Pricing({ plans }: { plans: Plan[] }) {
   const { dict } = useI18n();
   const t = dict.landing.harga;
   const [interval, setInterval] = useState<"monthly" | "yearly">("monthly");
@@ -105,8 +105,8 @@ export function Harga({ plans }: { plans: Plan[] }) {
                 <Link
                   href={
                     p.id === "free"
-                      ? "/daftar"
-                      : `/dashboard/langganan/checkout?plan=${p.id}&interval=${interval}`
+                      ? "/register"
+                      : `/dashboard/subscription/checkout?plan=${p.id}&interval=${interval}`
                   }
                   className={`mt-6 inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium transition-colors ${
                     featured

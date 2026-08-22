@@ -1,6 +1,6 @@
 import { getDictionary } from "@/i18n/server";
 
-export async function CaraKerja() {
+export async function HowItWorks() {
   const dict = await getDictionary();
   const t = dict.landing.caraKerja;
   return (

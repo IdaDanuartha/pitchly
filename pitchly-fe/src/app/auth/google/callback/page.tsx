@@ -51,7 +51,7 @@ export default function GoogleCallbackPage() {
             </h1>
             <p className="mt-3 text-sm text-ink-gray">{error}</p>
             <Link
-              href="/masuk"
+              href="/login"
               className="mt-6 inline-block text-sm text-spotlight-amber hover:underline"
             >
               {dict.auth.backToSignIn}

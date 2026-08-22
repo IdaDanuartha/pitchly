@@ -20,7 +20,7 @@ const icons = [
   ClipboardList,
 ];
 
-export async function Fitur() {
+export async function Features() {
   const dict = await getDictionary();
   const t = dict.landing.fitur;
   return (

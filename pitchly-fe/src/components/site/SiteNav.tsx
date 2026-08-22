@@ -39,13 +39,13 @@ export async function SiteNav() {
           ) : (
             <>
               <ButtonLink
-                href="/masuk"
+                href="/login"
                 variant="ghost"
                 className="hidden sm:inline-flex"
               >
                 {t.signIn}
               </ButtonLink>
-              <ButtonLink href="/daftar" variant="primary">
+              <ButtonLink href="/register" variant="primary">
                 {t.startPractice}
               </ButtonLink>
             </>

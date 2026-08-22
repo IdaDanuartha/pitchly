@@ -4,7 +4,7 @@ import { getDictionary } from "@/i18n/server";
 
 const icons = [Gavel, Rocket, SearchX];
 
-export async function PanelJuri() {
+export async function JudgePanel() {
   const dict = await getDictionary();
   const t = dict.landing.panel;
   return (

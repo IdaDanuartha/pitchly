@@ -9,7 +9,7 @@ import { getDictionary } from "@/i18n/server";
 
 export default async function CheckoutPage({
   searchParams,
-}: PageProps<"/dashboard/langganan/checkout">) {
+}: PageProps<"/dashboard/subscription/checkout">) {
   const sp = await searchParams;
   const planId = typeof sp.plan === "string" ? sp.plan : "pro";
   const interval: "monthly" | "yearly" =
@@ -17,7 +17,7 @@ export default async function CheckoutPage({
 
   const plans = await fetchPlans();
   const plan = plans.find((p) => p.id === planId);
-  if (!plan) redirect("/dashboard/langganan");
+  if (!plan) redirect("/dashboard/subscription");
 
   const t = (await getDictionary()).billing;
   const harga = interval === "yearly" ? plan.harga_tahunan : plan.harga_bulanan;
@@ -26,7 +26,7 @@ export default async function CheckoutPage({
   return (
     <div className="mx-auto max-w-2xl px-8 py-10">
       <Link
-        href="/dashboard/langganan"
+        href="/dashboard/subscription"
         className="inline-flex items-center gap-2 text-sm text-ink-gray hover:text-ink-navy"
       >
         <ArrowLeft size={16} strokeWidth={1.5} />

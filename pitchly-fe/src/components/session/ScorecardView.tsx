@@ -77,7 +77,7 @@ export function ScorecardView({
       body: JSON.stringify({ document_id: documentId, output_language: locale }),
     });
     const data = await res.json();
-    if (res.ok) router.push(`/sesi/${data.id}`);
+    if (res.ok) router.push(`/session/${data.id}`);
     else setRestarting(false);
   }
 
@@ -89,7 +89,7 @@ export function ScorecardView({
     });
     if (res.ok) {
       toast(t.deleted, "success");
-      router.push("/dashboard/riwayat");
+      router.push("/dashboard/history");
     } else {
       toast(t.deleteFailed, "error");
       setDeleting(false);

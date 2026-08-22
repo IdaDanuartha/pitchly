@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowLeft, Cpu, Lightbulb, Target } from "lucide-react";
 
-import { MulaiSimulasiButton } from "@/components/session/MulaiSimulasiButton";
+import { StartSimulationButton } from "@/components/session/StartSimulationButton";
 import { OriginalityCheck } from "@/components/session/OriginalityCheck";
 import { backendFetch } from "@/lib/api";
 import { getToken } from "@/lib/auth";
@@ -35,7 +35,7 @@ const SEVERITY_STYLE: Record<Finding["severity"], string> = {
 
 export default async function AnalisisPage({
   params,
-}: PageProps<"/dashboard/dokumen/[id]/analisis">) {
+}: PageProps<"/dashboard/documents/[id]/analysis">) {
   const { id } = await params;
   const token = await getToken();
   const t = (await getDictionary()).analisis;
@@ -128,7 +128,7 @@ export default async function AnalisisPage({
 
       <div className="mt-12 border-t border-paper-line pt-8">
         <p className="mb-5 max-w-lg text-sm text-ink-gray">{t.ctaBody}</p>
-        <MulaiSimulasiButton documentId={id} />
+        <StartSimulationButton documentId={id} />
       </div>
     </div>
   );
@@ -137,7 +137,7 @@ export default async function AnalisisPage({
 function BackLink({ label }: { label: string }) {
   return (
     <Link
-      href="/dashboard/sesi-baru"
+      href="/dashboard/new-session"
       className="inline-flex items-center gap-2 text-sm text-ink-gray hover:text-ink-navy"
     >
       <ArrowLeft size={16} strokeWidth={1.5} />

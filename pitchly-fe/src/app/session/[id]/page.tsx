@@ -7,9 +7,9 @@ import { getCurrentUser, getToken } from "@/lib/auth";
 export default async function SesiPage({
   params,
   searchParams,
-}: PageProps<"/sesi/[id]">) {
+}: PageProps<"/session/[id]">) {
   const user = await getCurrentUser();
-  if (!user) redirect("/masuk");
+  if (!user) redirect("/login");
 
   const { id } = await params;
   const sp = await searchParams;
@@ -18,7 +18,7 @@ export default async function SesiPage({
   if (!res.ok) redirect("/dashboard");
 
   const sess = await res.json();
-  if (sess.status === "selesai") redirect(`/sesi/${id}/scorecard`);
+  if (sess.status === "selesai") redirect(`/session/${id}/scorecard`);
 
   return (
     <LiveSession

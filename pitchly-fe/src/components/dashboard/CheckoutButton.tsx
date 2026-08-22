@@ -38,7 +38,7 @@ export function CheckoutButton({
           : `${t.paymentSuccessA} ${planId.toUpperCase()} ${t.paymentSuccessB}`,
         "success",
       );
-      router.push("/dashboard/langganan");
+      router.push("/dashboard/subscription");
       router.refresh();
     } catch (e) {
       toast(e instanceof Error ? e.message : t.genericError, "error");

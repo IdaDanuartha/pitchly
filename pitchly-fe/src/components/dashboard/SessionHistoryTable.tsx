@@ -10,7 +10,7 @@ import type { SessionListItem } from "@/lib/sessions";
 import { useI18n } from "@/i18n/client";
 
 function sessionHref(s: { id: string; status: string }): string {
-  return s.status === "selesai" ? `/sesi/${s.id}/scorecard` : `/sesi/${s.id}`;
+  return s.status === "selesai" ? `/session/${s.id}/scorecard` : `/session/${s.id}`;
 }
 
 export function SessionHistoryTable({

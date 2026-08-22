@@ -1,4 +1,4 @@
-import { Langganan } from "@/components/dashboard/Langganan";
+import { Subscription } from "@/components/dashboard/Subscription";
 import { fetchBilling, fetchPlans } from "@/lib/billing.server";
 import { getDictionary } from "@/i18n/server";
 
@@ -30,7 +30,7 @@ export default async function LanggananPage() {
         )}
       </p>
 
-      <Langganan plans={plans} billing={billing} />
+      <Subscription plans={plans} billing={billing} />
     </div>
   );
 }

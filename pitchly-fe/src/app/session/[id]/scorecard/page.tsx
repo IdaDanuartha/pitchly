@@ -11,9 +11,9 @@ import { getDictionary } from "@/i18n/server";
 
 export default async function ScorecardPage({
   params,
-}: PageProps<"/sesi/[id]/scorecard">) {
+}: PageProps<"/session/[id]/scorecard">) {
   const user = await getCurrentUser();
-  if (!user) redirect("/masuk");
+  if (!user) redirect("/login");
 
   const { id } = await params;
   const token = await getToken();

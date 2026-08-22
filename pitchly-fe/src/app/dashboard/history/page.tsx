@@ -26,7 +26,7 @@ export default async function RiwayatPage() {
       {sessions.length === 0 ? (
         <div className="mt-10 flex flex-col items-start gap-4 border border-paper-line bg-paper-soft p-8">
           <p className="text-sm text-ink-gray">{t.empty}</p>
-          <ButtonLink href="/dashboard/sesi-baru" variant="primary">
+          <ButtonLink href="/dashboard/new-session" variant="primary">
             {t.startNew}
           </ButtonLink>
         </div>

@@ -29,6 +29,11 @@ export const metadata: Metadata = {
   title: "Pitchly — Simulator Panel Juri",
   description:
     "Latihan presentasi dan tanya jawab kompetisi yang terasa seperti kompetisi sesungguhnya. Panel juri multi-persona yang menilai substansi jawaban Anda.",
+  icons: {
+    icon: "/images/logo/pitchly_logo.png",
+    shortcut: "/images/logo/pitchly_logo.png",
+    apple: "/images/logo/pitchly_logo.png",
+  },
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {

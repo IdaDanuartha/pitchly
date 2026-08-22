@@ -1,6 +1,6 @@
 import { Construction } from "lucide-react";
 
-export function SegeraHadir({ judul, body }: { judul: string; body: string }) {
+export function ComingSoon({ judul, body }: { judul: string; body: string }) {
   return (
     <div className="mx-auto max-w-3xl px-8 py-10">
       <div className="flex flex-col items-start gap-4 border border-paper-line bg-paper-soft p-10">

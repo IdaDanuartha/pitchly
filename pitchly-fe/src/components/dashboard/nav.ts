@@ -17,12 +17,12 @@ export type NavItem = { href: string; key: NavKey; icon: LucideIcon };
 
 export const NAV_ITEMS: NavItem[] = [
   { href: "/dashboard", key: "beranda", icon: LayoutDashboard },
-  { href: "/dashboard/sesi-baru", key: "sesiBaru", icon: Plus },
-  { href: "/dashboard/riwayat", key: "riwayat", icon: FileText },
-  { href: "/dashboard/tim", key: "tim", icon: Users },
-  { href: "/dashboard/rubrik", key: "rubrik", icon: LibraryBig },
-  { href: "/dashboard/langganan", key: "langganan", icon: CreditCard },
-  { href: "/dashboard/pengaturan", key: "pengaturan", icon: Settings },
+  { href: "/dashboard/new-session", key: "sesiBaru", icon: Plus },
+  { href: "/dashboard/history", key: "riwayat", icon: FileText },
+  { href: "/dashboard/team", key: "tim", icon: Users },
+  { href: "/dashboard/rubrics", key: "rubrik", icon: LibraryBig },
+  { href: "/dashboard/subscription", key: "langganan", icon: CreditCard },
+  { href: "/dashboard/settings", key: "pengaturan", icon: Settings },
 ];
 
 export function isActive(pathname: string, href: string): boolean {

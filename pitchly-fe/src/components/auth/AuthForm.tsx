@@ -94,7 +94,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
           {t.checkEmailBody}
         </p>
         <Link
-          href="/masuk"
+          href="/login"
           className="mt-6 text-sm text-spotlight-amber hover:underline"
         >
           {t.backToSignIn}
@@ -163,7 +163,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
       <p className="mt-6 text-sm text-ink-gray">
         {isDaftar ? t.haveAccount : t.noAccount}
         <Link
-          href={isDaftar ? "/masuk" : "/daftar"}
+          href={isDaftar ? "/login" : "/register"}
           className="text-spotlight-amber hover:underline"
         >
           {isDaftar ? t.signIn : t.signUp}

@@ -41,7 +41,7 @@ const PANEL_PERSONAS: Record<string, string[]> = {
   ujian: ["penguji"],
 };
 
-export function MulaiSimulasiButton({ documentId }: { documentId: string }) {
+export function StartSimulationButton({ documentId }: { documentId: string }) {
   const router = useRouter();
   const toast = useToast();
   const { locale, dict } = useI18n();
@@ -115,7 +115,7 @@ export function MulaiSimulasiButton({ documentId }: { documentId: string }) {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.detail ?? data.error ?? t.errStart);
-      router.push(`/sesi/${data.id}${voice ? "?voice=1" : ""}`);
+      router.push(`/session/${data.id}${voice ? "?voice=1" : ""}`);
     } catch (e) {
       const msg = e instanceof Error ? e.message : dict.common.error;
       setError(msg);
@@ -293,11 +293,11 @@ export function MulaiSimulasiButton({ documentId }: { documentId: string }) {
           <select
             value={teamId}
             onChange={(e) => setTeamId(e.target.value)}
-            className="mt-1.5 block w-full border border-ink-navy/20 bg-warm-paper px-3 py-2 text-sm text-ink-navy focus:border-ink-navy focus:outline-none"
+            className="mt-1 block w-full border border-ink-navy/20 bg-warm-paper px-3 py-2 text-sm text-ink-navy focus:border-ink-navy focus:outline-none"
           >
-            {teams.map((t) => (
-              <option key={t.id} value={t.id}>
-                {t.nama_tim}
+            {teams.map((tm) => (
+              <option key={tm.id} value={tm.id}>
+                {tm.nama_tim}
               </option>
             ))}
           </select>
@@ -306,7 +306,7 @@ export function MulaiSimulasiButton({ documentId }: { documentId: string }) {
       {mode === "tim" && teams.length === 0 && (
         <p className="mt-3 text-xs text-ink-gray">
           {t.belumTimA}{" "}
-          <Link href="/dashboard/tim" className="text-spotlight-amber hover:underline">
+          <Link href="/dashboard/team" className="text-spotlight-amber hover:underline">
             {t.buatTim}
           </Link>
           .
@@ -337,7 +337,7 @@ export function MulaiSimulasiButton({ documentId }: { documentId: string }) {
         <div className="mt-5 border-l-2 border-spotlight-amber bg-spotlight-amber/10 px-4 py-3 text-sm text-ink-navy">
           {t.quotaHabisA} ({dipakai}/{kuota}).{" "}
           <Link
-            href="/dashboard/langganan"
+            href="/dashboard/subscription"
             className="font-medium text-spotlight-amber hover:underline"
           >
             {t.upgrade}

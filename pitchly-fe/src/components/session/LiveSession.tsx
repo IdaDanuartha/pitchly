@@ -582,7 +582,7 @@ export function LiveSession({
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.detail ?? data.error ?? t.errScoreFailed);
-      router.push(`/sesi/${sessionId}/scorecard`);
+      router.push(`/session/${sessionId}/scorecard`);
     } catch (e) {
       setError(e instanceof Error ? e.message : t.errGeneric);
       setFinishing(false);
@@ -608,7 +608,7 @@ export function LiveSession({
         method: "POST",
       });
       if (res.ok) {
-        router.push(`/sesi/${sessionId}/scorecard`);
+        router.push(`/session/${sessionId}/scorecard`);
         return;
       }
     }

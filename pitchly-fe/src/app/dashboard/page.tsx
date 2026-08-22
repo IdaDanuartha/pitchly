@@ -60,7 +60,7 @@ export default async function DashboardHome() {
           </h2>
           <p className="mt-2 max-w-lg text-sm text-ink-gray">{t.ctaBody}</p>
         </div>
-        <ButtonLink href="/dashboard/sesi-baru" variant="primary">
+        <ButtonLink href="/dashboard/new-session" variant="primary">
           {t.ctaButton}
           <ArrowRight size={16} strokeWidth={1.5} />
         </ButtonLink>
@@ -73,7 +73,7 @@ export default async function DashboardHome() {
           </h2>
           {sessions.length > 5 && (
             <Link
-              href="/dashboard/riwayat"
+              href="/dashboard/history"
               className="text-sm text-spotlight-amber hover:underline"
             >
               {t.viewAll}

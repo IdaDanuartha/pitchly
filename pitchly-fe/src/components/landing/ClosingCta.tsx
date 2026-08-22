@@ -1,7 +1,7 @@
 import { ButtonLink } from "@/components/ui/Button";
 import { getDictionary } from "@/i18n/server";
 
-export async function CtaPenutup() {
+export async function ClosingCta() {
   const dict = await getDictionary();
   const t = dict.landing.cta;
   return (
@@ -15,7 +15,7 @@ export async function CtaPenutup() {
         </h2>
         <p className="mx-auto mt-5 max-w-xl text-ink-gray">{t.subtitle}</p>
         <div className="mt-9 flex justify-center">
-          <ButtonLink href="/daftar" variant="primary">
+          <ButtonLink href="/register" variant="primary">
             {t.cta}
           </ButtonLink>
         </div>

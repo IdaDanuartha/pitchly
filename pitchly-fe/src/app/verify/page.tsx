@@ -60,7 +60,7 @@ export default function VerifikasiPage() {
             </h1>
             <p className="mt-3 text-sm text-ink-gray">{t.okBody}</p>
             <Link
-              href="/masuk"
+              href="/login"
               className="mt-6 inline-block border border-spotlight-amber bg-spotlight-amber px-5 py-3 text-sm font-medium text-warm-paper transition-colors hover:bg-[#a06a15]"
             >
               {dict.auth.signIn}
@@ -75,7 +75,7 @@ export default function VerifikasiPage() {
             </h1>
             <p className="mt-3 text-sm text-ink-gray">{message}</p>
             <Link
-              href="/masuk"
+              href="/login"
               className="mt-6 inline-block text-sm text-spotlight-amber hover:underline"
             >
               {dict.auth.backToSignIn}

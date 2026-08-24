@@ -7,6 +7,7 @@ from app.core.config import settings
 # Referensi: https://github.com/openai/whisper/discussions/928
 _HALLUCINATION_PATTERNS = re.compile(
     r"^\s*("
+    # English patterns
     r"thanks for watching[!.]?"
     r"|thank you for watching[!.]?"
     r"|please subscribe[!.]?"
@@ -20,6 +21,16 @@ _HALLUCINATION_PATTERNS = re.compile(
     r"|\[blank_audio\]"
     r"|\(music\)"
     r"|www\.[a-z]+\.[a-z]+"
+    # Indonesian YouTube / social-media patterns
+    r"|jangan lupa (subscribe|like|komen|share|klik)[^.]{0,60}"
+    r"|like (dan|dan subscribe|subscribe)[^.]{0,40}"
+    r"|terima kasih (sudah|telah) (menonton|nonton)[^.]{0,40}"
+    r"|sampai jumpa di (video|konten)[^.]{0,40}"
+    r"|tekan tombol[^.]{0,40}"
+    r"|nyalakan notifikasi[^.]{0,40}"
+    # Prompt echo — Whisper kadang mengulang prompt yang dikirim
+    r"|jawaban lisan peserta kompetisi[^.]{0,80}"
+    r"|peserta kompetisi dalam bahasa indonesia[^.]{0,60}"
     r")\s*$",
     re.IGNORECASE,
 )
@@ -48,18 +59,14 @@ class WhisperSTT:
             result = client.audio.transcriptions.create(
                 model=self.model,
                 file=buffer,
-                # Memberi konteks bahasa Indonesia agar Whisper tidak menebak
-                # bahasa lain dari noise, dan mengurangi halusinasi umum.
-                prompt=(
-                    "Ini adalah jawaban lisan peserta kompetisi dalam bahasa Indonesia. "
-                    "Jawaban berisi penjelasan teknis, solusi, atau argumen."
-                ),
+                # language=id mengurangi tebakan bahasa yang salah dari noise
+                # tanpa prompt agar Whisper tidak echo-balik teks prompt.
                 language="id",
             )
         except OpenAIError as exc:
             raise STTError(f"Transkripsi gagal: {exc}") from exc
         text = (result.text or "").strip()
-        # Buang halusinasi Whisper umum (noise → frasa bahasa Inggris aneh)
+        # Buang halusinasi Whisper umum (noise → frasa aneh)
         if _HALLUCINATION_PATTERNS.match(text):
             return ""
         return text

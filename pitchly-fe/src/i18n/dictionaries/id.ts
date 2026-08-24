@@ -178,6 +178,7 @@ export const id = {
     recManualIdle: "Klik untuk menjawab (suara)",
     errRecordUnsupported: "Perekaman suara tidak didukung browser ini",
     errNoVoice: "Tidak ada suara terdeteksi.",
+    voiceNotHeard: "*(Jawaban tidak terdengar dengan baik)*",
     errTranscribeFailed: "Transkripsi gagal",
     errMicAccess: "Tidak dapat mengakses mikrofon",
     errLoadFailed: "Gagal memuat",

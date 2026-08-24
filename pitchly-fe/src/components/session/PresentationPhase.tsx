@@ -296,7 +296,7 @@ export function PresentationPhase({
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col justify-center px-4 py-8 sm:px-6 sm:py-12">
+    <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col overflow-y-auto px-4 py-8 sm:px-6 sm:py-12">
       <p className="font-mono text-xs uppercase tracking-[0.25em] text-warm-paper/50">
         {t.eyebrow}
       </p>

@@ -245,7 +245,7 @@ export const id = {
   suggestions: {
     title: "Saran Jawaban",
     intro:
-      "Koreksi jawaban Anda beserta contoh jawaban yang lebih kuat untuk tiap pertanyaan juri. Hanya untuk latihan — tidak termasuk dalam laporan yang diekspor.",
+      "Koreksi jawaban Anda beserta contoh jawaban yang lebih kuat untuk tiap pertanyaan juri. Hanya untuk latihan dan tidak termasuk dalam laporan yang diekspor.",
     show: "Tampilkan Saran Jawaban",
     loading: "Menyusun saran…",
     empty: "Belum ada jawaban untuk dikoreksi.",
@@ -577,7 +577,7 @@ export const id = {
         },
         {
           stat: "Ruang latihan terbatas",
-          body: "Latihan hanya tersedia lewat dosen pembimbing dan rekan tim — tidak selalu bisa mensimulasikan beragam gaya juri.",
+          body: "Latihan hanya tersedia lewat dosen pembimbing dan rekan tim dan tidak selalu bisa mensimulasikan beragam gaya juri.",
         },
         {
           stat: "Sekali review",

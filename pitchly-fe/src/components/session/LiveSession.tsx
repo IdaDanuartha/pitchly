@@ -514,7 +514,10 @@ export function LiveSession({
           if (!res.ok) throw new Error(data.detail ?? data.error ?? t.errTranscribeFailed);
           const text = (data.text ?? "").trim();
           setTranscribing(false);
-          if (text) {
+          // Tolak hasil transkripsi yang terlalu pendek — kemungkinan besar
+          // adalah noise atau halusinasi Whisper dari background audio.
+          const wordCount = text ? text.split(/\s+/).filter(Boolean).length : 0;
+          if (text && wordCount >= 3) {
             await submitAnswer(text);
           } else {
             setVoiceError(t.errNoVoice);

@@ -204,7 +204,6 @@ docker compose up --build
 |---|---|
 | Frontend | http://localhost:3010 |
 | Backend API | http://localhost:8000 |
-| API Docs (Swagger) | http://localhost:8000/docs |
 | Health check | http://localhost:8000/health |
 | PostgreSQL | `localhost:5432` (dari host, jika port di-expose) |
 

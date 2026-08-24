@@ -179,6 +179,7 @@ export const en: Dictionary = {
     recManualIdle: "Click to answer (voice)",
     errRecordUnsupported: "Voice recording isn't supported in this browser",
     errNoVoice: "No voice detected.",
+    voiceNotHeard: "*(Answer not heard clearly)*",
     errTranscribeFailed: "Transcription failed",
     errMicAccess: "Couldn't access the microphone",
     errLoadFailed: "Failed to load",

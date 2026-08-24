@@ -6,6 +6,7 @@ import { Check } from "lucide-react";
 
 import { formatRupiah, type Plan } from "@/lib/billing";
 import { useI18n } from "@/i18n/client";
+import { ScrollReveal } from "./ScrollReveal";
 
 export function Pricing({ plans }: { plans: Plan[] }) {
   const { dict } = useI18n();
@@ -16,13 +17,15 @@ export function Pricing({ plans }: { plans: Plan[] }) {
   return (
     <section id="harga" className="border-t border-paper-line bg-warm-paper py-24">
       <div className="mx-auto max-w-6xl px-6">
-        <p className="font-mono text-xs uppercase tracking-[0.25em] text-ink-gray">
-          {t.eyebrow}
-        </p>
-        <h2 className="mt-3 max-w-2xl font-display text-3xl font-semibold tracking-tight text-ink-navy sm:text-4xl">
-          {t.title}
-        </h2>
-        <p className="mt-3 max-w-xl text-ink-gray">{t.subtitle}</p>
+        <ScrollReveal variant="up">
+          <p className="font-mono text-xs uppercase tracking-[0.25em] text-ink-gray">
+            {t.eyebrow}
+          </p>
+          <h2 className="mt-3 max-w-2xl font-display text-3xl font-semibold tracking-tight text-ink-navy sm:text-4xl">
+            {t.title}
+          </h2>
+          <p className="mt-3 max-w-xl text-ink-gray">{t.subtitle}</p>
+        </ScrollReveal>
 
         <div className="mt-8 inline-flex border border-paper-line">
           {(["monthly", "yearly"] as const).map((iv) => (
@@ -45,7 +48,7 @@ export function Pricing({ plans }: { plans: Plan[] }) {
           ))}
         </div>
 
-        <div className="mt-8 grid gap-5 lg:grid-cols-3">
+        <ScrollReveal variant="up" delay={0.1} stagger staggerDelay={0.1} className="mt-8 grid gap-5 lg:grid-cols-3">
           {plans.map((p) => {
             const harga = interval === "yearly" ? p.harga_tahunan : p.harga_bulanan;
             const featured = p.id === "pro";
@@ -119,7 +122,7 @@ export function Pricing({ plans }: { plans: Plan[] }) {
               </div>
             );
           })}
-        </div>
+        </ScrollReveal>
       </div>
     </section>
   );

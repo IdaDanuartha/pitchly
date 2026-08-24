@@ -520,7 +520,9 @@ export function LiveSession({
           if (text && wordCount >= 3) {
             await submitAnswer(text);
           } else {
-            setVoiceError(t.errNoVoice);
+            // Suara tidak terdeteksi → submit placeholder natural agar sesi
+            // tetap berjalan dan terlihat di transcript (bukan error modal).
+            await submitAnswer(t.voiceNotHeard);
           }
         } catch (e) {
           setVoiceError(e instanceof Error ? e.message : t.errTranscribeFailed);

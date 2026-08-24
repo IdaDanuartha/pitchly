@@ -3,6 +3,7 @@ import { Circle, Timer } from "lucide-react";
 import { ButtonLink } from "@/components/ui/Button";
 import { getDictionary } from "@/i18n/server";
 import type { Dictionary } from "@/i18n/dictionaries/id";
+import { ScrollReveal } from "./ScrollReveal";
 
 export async function Hero() {
   const dict = await getDictionary();
@@ -10,7 +11,7 @@ export async function Hero() {
   return (
     <section className="relative overflow-hidden border-b border-paper-line">
       <div className="mx-auto grid max-w-6xl gap-14 px-6 py-20 lg:grid-cols-[1.05fr_0.95fr] lg:py-28">
-        <div className="flex flex-col justify-center">
+        <ScrollReveal variant="left" className="flex flex-col justify-center">
           <p className="font-mono text-xs uppercase tracking-[0.25em] text-ink-gray">
             {t.eyebrow}
           </p>
@@ -28,9 +29,11 @@ export async function Hero() {
               {t.ctaSecondary}
             </ButtonLink>
           </div>
-        </div>
+        </ScrollReveal>
 
-        <HeroStageMock t={t} />
+        <ScrollReveal variant="right" delay={0.15}>
+          <HeroStageMock t={t} />
+        </ScrollReveal>
       </div>
     </section>
   );

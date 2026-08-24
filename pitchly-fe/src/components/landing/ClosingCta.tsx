@@ -1,12 +1,13 @@
 import { ButtonLink } from "@/components/ui/Button";
 import { getDictionary } from "@/i18n/server";
+import { ScrollReveal } from "./ScrollReveal";
 
 export async function ClosingCta() {
   const dict = await getDictionary();
   const t = dict.landing.cta;
   return (
     <section id="riset" className="border-b border-paper-line">
-      <div className="mx-auto max-w-6xl px-6 py-24 text-center">
+      <ScrollReveal variant="up" className="mx-auto max-w-6xl px-6 py-24 text-center">
         <p className="font-mono text-xs uppercase tracking-[0.25em] text-ink-gray">
           {t.eyebrow}
         </p>
@@ -19,7 +20,7 @@ export async function ClosingCta() {
             {t.cta}
           </ButtonLink>
         </div>
-      </div>
+      </ScrollReveal>
     </section>
   );
 }

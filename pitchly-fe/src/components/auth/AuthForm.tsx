@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { MailCheck } from "lucide-react";
+import { Eye, EyeOff, MailCheck } from "lucide-react";
 
 import { Button } from "@/components/ui/Button";
 import { Logo } from "@/components/ui/Logo";
@@ -184,18 +184,34 @@ function Field({
   type: string;
   placeholder: string;
 }) {
+  const isPassword = type === "password";
+  const [show, setShow] = useState(false);
+
   return (
     <label className="flex flex-col gap-1.5">
       <span className="font-mono text-[11px] uppercase tracking-[0.15em] text-ink-gray">
         {label}
       </span>
-      <input
-        name={name}
-        type={type}
-        required
-        placeholder={placeholder}
-        className="border border-ink-navy/20 bg-warm-paper px-3 py-2.5 text-sm text-ink-navy placeholder:text-ink-gray/50 focus:border-ink-navy focus:outline-none"
-      />
+      <div className="relative">
+        <input
+          name={name}
+          type={isPassword ? (show ? "text" : "password") : type}
+          required
+          placeholder={placeholder}
+          className="w-full border border-ink-navy/20 bg-warm-paper px-3 py-2.5 pr-10 text-sm text-ink-navy placeholder:text-ink-gray/50 focus:border-ink-navy focus:outline-none"
+        />
+        {isPassword && (
+          <button
+            type="button"
+            tabIndex={-1}
+            onClick={() => setShow((s) => !s)}
+            className="absolute inset-y-0 right-0 flex items-center px-3 text-ink-gray/50 hover:text-ink-navy"
+            aria-label={show ? "Sembunyikan kata sandi" : "Tampilkan kata sandi"}
+          >
+            {show ? <EyeOff size={16} strokeWidth={1.5} /> : <Eye size={16} strokeWidth={1.5} />}
+          </button>
+        )}
+      </div>
     </label>
   );
 }

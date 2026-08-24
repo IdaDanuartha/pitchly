@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { CheckSquare, Loader2, Printer, RotateCcw, Square, Trash2 } from "lucide-react";
+import { CheckSquare, Loader2, MonitorPlay, Printer, RotateCcw, Square, Trash2, TrendingUp, Wrench } from "lucide-react";
 
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import { useToast } from "@/components/ui/Toast";
@@ -166,45 +166,64 @@ export function ScorecardView({
       {/* Penilaian presentasi */}
       {scorecard.penilaian_presentasi_json && (
         <section className="mt-10">
-          <div className="flex items-center justify-between gap-4">
-            <h2 className="font-display text-lg font-semibold text-ink-navy">
-              {t.penilaianPresentasi}
-            </h2>
-            {typeof scorecard.penilaian_presentasi_json.skor === "number" && (
-              <span className="font-mono text-2xl font-medium text-ink-navy tabular-nums">
-                {scorecard.penilaian_presentasi_json.skor}
-              </span>
+          {/* Header card */}
+          <div className="border border-paper-line bg-paper-soft px-6 py-5">
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-2.5">
+                <MonitorPlay size={18} strokeWidth={1.5} className="shrink-0 text-spotlight-amber" />
+                <h2 className="font-display text-lg font-semibold text-ink-navy">
+                  {t.penilaianPresentasi}
+                </h2>
+              </div>
+              {typeof scorecard.penilaian_presentasi_json.skor === "number" && (
+                <div className="flex items-baseline gap-1">
+                  <span className="font-mono text-3xl font-semibold tabular-nums text-ink-navy">
+                    {scorecard.penilaian_presentasi_json.skor}
+                  </span>
+                  <span className="font-mono text-sm text-ink-gray">/100</span>
+                </div>
+              )}
+            </div>
+            {scorecard.penilaian_presentasi_json.ringkasan && (
+              <p className="mt-3 border-t border-paper-line pt-3 text-sm leading-relaxed text-ink-gray">
+                {scorecard.penilaian_presentasi_json.ringkasan}
+              </p>
             )}
           </div>
-          {scorecard.penilaian_presentasi_json.ringkasan && (
-            <p className="mt-3 text-sm leading-relaxed text-ink-navy">
-              {scorecard.penilaian_presentasi_json.ringkasan}
-            </p>
-          )}
-          <div className="mt-5 grid gap-6 sm:grid-cols-2">
+
+          {/* Kekuatan & Perbaikan columns */}
+          <div className="mt-px grid sm:grid-cols-2">
             {!!scorecard.penilaian_presentasi_json.kekuatan?.length && (
-              <div>
-                <h3 className="font-mono text-[11px] uppercase tracking-[0.15em] text-growth-teal">
-                  {t.kekuatan}
-                </h3>
-                <ul className="mt-3 flex flex-col gap-2">
+              <div className="border border-r-0 border-paper-line p-5 sm:border-r-0">
+                <div className="flex items-center gap-2">
+                  <TrendingUp size={14} strokeWidth={1.5} className="shrink-0 text-growth-teal" />
+                  <h3 className="font-mono text-[11px] uppercase tracking-[0.15em] text-growth-teal">
+                    {t.kekuatan}
+                  </h3>
+                </div>
+                <ul className="mt-4 flex flex-col gap-3">
                   {scorecard.penilaian_presentasi_json.kekuatan.map((x, i) => (
-                    <li key={i} className="text-sm text-ink-navy">
-                      — {x}
+                    <li key={i} className="flex items-start gap-2.5">
+                      <span className="mt-0.5 shrink-0 text-growth-teal" aria-hidden>✦</span>
+                      <span className="text-sm leading-relaxed text-ink-navy">{x}</span>
                     </li>
                   ))}
                 </ul>
               </div>
             )}
             {!!scorecard.penilaian_presentasi_json.perbaikan?.length && (
-              <div>
-                <h3 className="font-mono text-[11px] uppercase tracking-[0.15em] text-critique-rust">
-                  {t.perbaikan}
-                </h3>
-                <ul className="mt-3 flex flex-col gap-2">
+              <div className="border border-paper-line p-5">
+                <div className="flex items-center gap-2">
+                  <Wrench size={14} strokeWidth={1.5} className="shrink-0 text-critique-rust" />
+                  <h3 className="font-mono text-[11px] uppercase tracking-[0.15em] text-critique-rust">
+                    {t.perbaikan}
+                  </h3>
+                </div>
+                <ul className="mt-4 flex flex-col gap-3">
                   {scorecard.penilaian_presentasi_json.perbaikan.map((x, i) => (
-                    <li key={i} className="text-sm text-ink-navy">
-                      — {x}
+                    <li key={i} className="flex items-start gap-2.5">
+                      <span className="mt-0.5 shrink-0 text-critique-rust" aria-hidden>→</span>
+                      <span className="text-sm leading-relaxed text-ink-navy">{x}</span>
                     </li>
                   ))}
                 </ul>
